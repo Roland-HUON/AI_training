@@ -3,7 +3,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: black;
+    background: white;
     min-height: 100vh;
     position: relative;
     overflow-x: hidden; /* Pour éviter la barre de défilement horizontale */
@@ -42,14 +42,36 @@ button {
     border: none;
 }
 
-h1 {
-    position: fixed; /* Garde le titre visible aussi */
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: white;
-    z-index: 2000;
-    margin: 0;
+header{
+    display: flex;
+    align-items: center;
+    gap: 60px;
+    padding: 20px;
+    background-color: white;
+    h1 {
+        color: black;
+        z-index: 2000;
+        margin: 0;
+    }
+    nav {
+        display: flex;
+        gap: 20px;
+        ul {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+            li {
+                a {
+                    text-decoration: none;
+                    color: black;
+                    font-weight: 700;
+                }
+                a:hover{
+                    text-decoration: underline;
+                }
+            }
+        }
+    }
 }
 
 #message {
@@ -70,4 +92,37 @@ h1 {
     color: white;
     font-size: 24px;
     z-index: 1000;
+}
+
+.game-over-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    text-align: center;
+    z-index: 3000;
+}
+
+.game-over-popup h2 {
+    color: #f44336;
+    margin-bottom: 20px;
+}
+
+.game-over-popup button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+.game-over-popup button:hover {
+    background-color: #45a049;
 }
