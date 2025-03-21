@@ -115,15 +115,11 @@ function EagleActivation(){
 
 function EagleAttack(){
     let currentTime = millis();
-    
-    // Vérifier si assez de temps s'est écoulé depuis la dernière attaque
     if(eagleActivation == true && currentTime - lastAttackTime >= attackCooldown){
         console.log("Eagle attack");
         sound.play();
         let newEagle = createEagle();
         eagles.push(newEagle);
-        
-        // Mettre à jour le temps de la dernière attaque
         lastAttackTime = currentTime;
     }   
 }
@@ -135,8 +131,8 @@ function Pause(){
 
 function createEagle() {
     return {
-        x: -100,  // Position X de départ
-        y: height/2 - 50,  // Position Y centrée
+        x: -100,
+        y: height/2 - 50,
         width: 100,
         height: 50,
         isActive: true
