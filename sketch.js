@@ -177,7 +177,6 @@ function draw() {
             image(eagle_image, eagle.x, eagle.y, eagle.width, eagle.height);
             eagle.x += (eagle_speed * deltaTime) / 1000;
             
-            // Vérifier si l'aigle atteint la zone de la cible
             if (eagle.x > width - 150) {
                 if (!targetVisible) {
                     gameOver();
