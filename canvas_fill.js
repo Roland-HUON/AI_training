@@ -2,7 +2,7 @@ let handPose, video;
 let hands = [];
 let drawnPoints = [];
 let isDetecting = true;
-let maxTime = 180000;
+let maxTime = 60000;
 // let maxTime = 5000;
 let startTime = 0;
 let percent = 0;

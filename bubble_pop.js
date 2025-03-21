@@ -380,20 +380,38 @@ function gameOver() {
     popup.innerHTML = `
         <h2>Game Over!</h2>
         <p>Score: ${score}</p>
-        <button onclick="window.restartGame()">Rejouer</button>
+        <button onclick="restartGame()">Rejouer</button>
     `;
     document.body.appendChild(popup);
 }
 
-window.restartGame = function() {
+function restartGame() {
+    // Supprimer la popup
     const popup = document.querySelector('.game-over-popup');
     if (popup) {
         popup.remove();
     }
+    
+    // Réinitialiser complètement le jeu
     isGameOver = false;
-    handPose.detectStart(video, gotHands); // Redémarrer la détection
+    isGameStarted = false;
+    isShooting = false;
+    currentBubble = null;
+    aimingBubble = false;
+    score = 0;
+    bubbles = [];
+    gridBubbles = [];
+    
+    // Redémarrer la détection de la main
+    handPose.detectStart(video, gotHands);
+    isDetecting = true;
+    
+    // Démarrer une nouvelle partie
     startGame();
 }
+
+// Rendre la fonction accessible globalement
+window.restartGame = restartGame;
 
 function shootBubbleFromBottom(angle) {
     let speed = 5;
