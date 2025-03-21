@@ -256,6 +256,10 @@ function checkCollisions(bubble, bubbleIndex) {
         return true;
     }
     
+    let collision = false;
+    let closestDist = Infinity;
+    let bestPosition = null;
+    
     // Vérifier les collisions avec les autres bulles
     for (let row = 0; row < gridBubbles.length; row++) {
         for (let col = 0; col < gridBubbles[row].length; col++) {
@@ -263,33 +267,49 @@ function checkCollisions(bubble, bubbleIndex) {
             if (!gridBubble) continue;
             
             let d = dist(bubble.x, bubble.y, gridBubble.x, gridBubble.y);
-            if (d < (bubble.radius + gridBubble.radius) * 1.2) { // Distance de collision réduite
-                // Calculer la position de la nouvelle bulle
-                let angle = Math.atan2(bubble.y - gridBubble.y, bubble.x - gridBubble.x);
-                let newRow = row;
-                let newCol = col;
+            if (d < (bubble.radius + gridBubble.radius) * 1.2) { // Distance de collision
+                collision = true;
                 
-                // Déterminer la position en fonction de l'angle de collision
-                if (angle < -2.356) newRow--; // Haut
-                else if (angle < -0.785) { newRow--; newCol++; } // Haut-droite
-                else if (angle < 0.785) newCol++; // Droite
-                else if (angle < 2.356) { newRow++; newCol++; } // Bas-droite
-                else if (angle < 3.927) newRow++; // Bas
-                else if (angle < 5.498) { newRow++; newCol--; } // Bas-gauche
-                else if (angle < 6.269) newCol--; // Gauche
-                else { newRow--; newCol--; } // Haut-gauche
+                // Calculer toutes les positions possibles autour de la bulle touchée
+                let positions = [
+                    {row: row-1, col: col},     // haut
+                    {row: row+1, col: col},     // bas
+                    {row: row, col: col-1},     // gauche
+                    {row: row, col: col+1},     // droite
+                    {row: row-1, col: col-1},   // haut-gauche
+                    {row: row-1, col: col+1},   // haut-droite
+                    {row: row+1, col: col-1},   // bas-gauche
+                    {row: row+1, col: col+1}    // bas-droite
+                ];
                 
-                // Vérifier si la position est valide
-                if (newRow >= 0 && newRow < gridBubbles.length && 
-                    newCol >= 0 && newCol < gridCols) {
-                    if (!gridBubbles[newRow] || !gridBubbles[newRow][newCol]) {
-                        placeBubble(newRow, newCol, bubble, bubbleIndex);
-                        return true;
+                // Trouver la meilleure position (la plus proche du point de collision)
+                for (let pos of positions) {
+                    if (pos.row >= 0 && pos.row < gridBubbles.length && 
+                        pos.col >= 0 && pos.col < gridCols) {
+                        
+                        // Vérifier si la position est libre
+                        if (!gridBubbles[pos.row] || !gridBubbles[pos.row][pos.col]) {
+                            let testX = bubbleGrid.x + pos.col * bubbleGrid.cellSize;
+                            let testY = bubbleGrid.y + pos.row * bubbleGrid.cellSize;
+                            let testDist = dist(bubble.x, bubble.y, testX, testY);
+                            
+                            if (testDist < closestDist) {
+                                closestDist = testDist;
+                                bestPosition = pos;
+                            }
+                        }
                     }
                 }
             }
         }
     }
+    
+    // Si une collision a été détectée et qu'une position valide a été trouvée
+    if (collision && bestPosition) {
+        placeBubble(bestPosition.row, bestPosition.col, bubble, bubbleIndex);
+        return true;
+    }
+    
     return false;
 }
 
@@ -417,7 +437,7 @@ function restartGame() {
 window.restartGame = restartGame;
 
 function shootBubbleFromBottom(angle) {
-    let speed = 5;
+    let speed = 4; // Réduire légèrement la vitesse
     let bubble = {
         x: width/2,
         y: gameOverLine.y,
