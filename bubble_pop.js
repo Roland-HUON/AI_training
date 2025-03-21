@@ -33,6 +33,7 @@ let currentBubble = null;
 let aimStartTime = 0;
 let aimDuration = 3000; // 3 secondes en millisecondes
 let aimingBubble = false;
+let isGameOverTriggered = false;
 
 function preload() {
     handPose = ml5.handPose({
@@ -67,7 +68,8 @@ function draw() {
                 circle(bubble.x, bubble.y, bubble.radius * 2);
                 
                 // Vérifier si une bulle traverse la ligne
-                if (bubble.y + bubble.radius > gameOverLine.y) {
+                if (!isGameOverTriggered && bubble.y + bubble.radius > gameOverLine.y) {
+                    isGameOverTriggered = true;
                     gameOver();
                     return;
                 }
@@ -401,6 +403,7 @@ function restartGame() {
     score = 0;
     bubbles = [];
     gridBubbles = [];
+    isGameOverTriggered = false;
     
     // Redémarrer la détection de la main
     handPose.detectStart(video, gotHands);
