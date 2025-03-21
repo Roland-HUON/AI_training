@@ -1,0 +1,73 @@
+body {
+    text-align: center;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: black;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden; /* Pour éviter la barre de défilement horizontale */
+}
+
+video, canvas {
+    display: block;
+    margin: 20px auto;
+    position: relative; /* Au lieu de absolute */
+}
+
+.controls {
+    position: fixed; /* Changé de relative à fixed */
+    bottom: 20px;   /* Position en bas de la page */
+    left: 50%;      /* Centre horizontalement */
+    transform: translateX(-50%); /* Centre parfaitement */
+    z-index: 2000;  /* S'assure que les boutons sont toujours au-dessus */
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#startButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+
+#stopButton {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+h1 {
+    position: fixed; /* Garde le titre visible aussi */
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    z-index: 2000;
+    margin: 0;
+}
+
+#message {
+    display: none;
+    font-size: 24px;
+    color: red;
+    font-weight: bold;
+}
+
+.target {
+    transition: transform 0.2s ease;
+}
+
+#score {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    color: white;
+    font-size: 24px;
+    z-index: 1000;
+}
