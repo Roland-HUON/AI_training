@@ -2,7 +2,6 @@ let handPose, video;
 let hands = [];
 function preload() {
     handPose = ml5.handPose({
-        maxHands: 1,
         flipped: true,
     });
 }
