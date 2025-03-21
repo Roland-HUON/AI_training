@@ -43,29 +43,16 @@ function setup() {
     let canvasX = (windowWidth - width) / 2;
     canvas.position(canvasX, 20);
     
-    // Positionner la cible à droite de la page
-    targetElement = createImg(cible, 'target');
-    targetElement.style('position', 'absolute');
-    targetElement.style('right', '20px');  // 20px de marge à droite
-    targetElement.style('top', '50%');
-    targetElement.style('transform', 'translateY(-50%)');
-    targetElement.style('z-index', '999');
-    targetElement.size(100, 100);
+    // Charger l'image de la cible
+    targetElement = loadImage(cible);
     
-    // Créer un élément img pour l'aigle
-    eagleElement = createImg(eagle_attack, 'eagle');
-    eagleElement.style('position', 'absolute');
-    eagleElement.style('display', 'none');
-    eagleElement.style('z-index', '1000');
-    
-    // Par défaut, on commence en mode arrêté
     stopEverything();
     
     // Ajout des événements pour les boutons
     document.getElementById('startButton').addEventListener('click', startEverything);
     document.getElementById('stopButton').addEventListener('click', stopEverything);
     
-    // Créer le popup de Game Over (caché par défaut)
+    // Créer le popup de Game Over
     gameOverPopup = createDiv('');
     gameOverPopup.class('game-over-popup');
     gameOverPopup.html(`
@@ -75,7 +62,6 @@ function setup() {
     `);
     gameOverPopup.hide();
     
-    // Ajouter l'événement pour le bouton recommencer
     document.getElementById('restartButton').addEventListener('click', restartGame);
 }
 
@@ -121,6 +107,10 @@ function EagleActivation(){
         sound.play();
     }
     eagleActivation = false;
+    document.querySelector(".eagleActivation-effect").style.display = "flex";
+    setTimeout(() => {
+        document.querySelector(".eagleActivation-effect").style.display = "none";
+    }, 1000);
 }
 
 function EagleAttack(){
@@ -144,14 +134,11 @@ function Pause(){
 }
 
 function createEagle() {
-    let eagleElement = createImg(eagle_attack, 'eagle');
-    eagleElement.style('position', 'absolute');
-    eagleElement.style('z-index', '1000');
-    eagleElement.size(200, 100);
-    
     return {
-        element: eagleElement,
-        x: -200,  // Commencer hors de l'écran
+        x: -100,  // Position X de départ
+        y: height/2 - 50,  // Position Y centrée
+        width: 100,
+        height: 50,
         isActive: true
     };
 }
@@ -162,12 +149,18 @@ function draw() {
     // Mettre à jour le pattern de la cible
     updateTargetPattern();
     
+    // Afficher la cible si elle est visible
+    if (targetVisible) {
+        image(targetElement, width - 100, height/2 - 50, 100, 100);
+    }
+    
     // Afficher le score
     fill(255);
     textSize(32);
     textAlign(LEFT, TOP);
     text('Score: ' + score, 10, 10);
     
+    // Afficher les points de la main
     for (let hand of hands) {
         if (hand.keypoints) {
             for (let keypoint of hand.keypoints) {
@@ -182,32 +175,21 @@ function draw() {
     let deltaTime = now - lastFrameTime;
     lastFrameTime = now;
     
-    // Mettre à jour la position de tous les aigles
+    // Mettre à jour et afficher les aigles
     eagles = eagles.filter(eagle => {
         if (eagle.isActive) {
-            eagle.element.style('display', 'block');
-            eagle.element.position(eagle.x, window.innerHeight/2 - 50);
+            image(eagle_image, eagle.x, eagle.y, eagle.width, eagle.height);
             eagle.x += (eagle_speed * deltaTime) / 1000;
             
-            // Vérifier si l'aigle atteint la cible
-            if (eagle.x > window.innerWidth - 150) {
+            // Vérifier si l'aigle atteint la zone de la cible
+            if (eagle.x > width - 150) {
                 if (!targetVisible) {
-                    // Game Over si la cible est invisible
                     gameOver();
                     eagle.isActive = false;
-                    eagle.element.remove();
                     return false;
                 }
-                // Si la cible est visible, marquer des points
                 score += addScore;
                 eagle.isActive = false;
-                eagle.element.remove();
-                
-                targetElement.style('transform', 'translateY(-50%) scale(1.2)');
-                setTimeout(() => {
-                    targetElement.style('transform', 'translateY(-50%) scale(1)');
-                }, 200);
-                
                 return false;
             }
             return true;
@@ -225,7 +207,6 @@ function startEverything() {
         gameStartTime = millis();  // Enregistrer le temps de début
         patternStartTime = millis();
         targetVisible = true;
-        targetElement.style('display', 'block');
     }
 }
 
@@ -238,19 +219,15 @@ function stopEverything() {
         sound.currentTime = 0;
         eagleActivation = false;
         isRunning = false;
-        score = 0;  // Réinitialiser le score
+        score = 0;
         
         // Nettoyer tous les aigles
-        eagles.forEach(eagle => {
-            eagle.element.remove();
-        });
-        eagles = [];
+        eagles = [];  // Il suffit de vider le tableau
         
         clear();
         targetPatternState = 0;
         targetVisible = true;
         speedMultiplier = 1;
-        targetElement.style('display', 'none');
     }
 }
 
@@ -306,8 +283,6 @@ function updateTargetPattern() {
             }
             break;
     }
-    
-    targetElement.style('display', targetVisible ? 'block' : 'none');
 }
 
 function gameOver() {
@@ -318,9 +293,6 @@ function gameOver() {
     sound.pause();
     
     // Nettoyer tous les aigles
-    eagles.forEach(eagle => {
-        eagle.element.remove();
-    });
     eagles = [];
     
     // Mettre à jour et afficher le popup

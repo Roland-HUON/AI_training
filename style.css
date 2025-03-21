@@ -12,13 +12,14 @@ body {
 video, canvas {
     display: block;
     margin: 20px auto;
-    position: relative; /* Au lieu de absolute */
+    position: relative;
+    position: unset !important;
 }
 
 .controls {
-    position: fixed; /* Changé de relative à fixed */
-    bottom: 20px;   /* Position en bas de la page */
-    left: 50%;      /* Centre horizontalement */
+    position: fixed; 
+    bottom: 20px;
+    left: 50%;
     transform: translateX(-50%); /* Centre parfaitement */
     z-index: 2000;  /* S'assure que les boutons sont toujours au-dessus */
 }
@@ -41,13 +42,44 @@ button {
     color: white;
     border: none;
 }
-
+.eagleActivation-effect{
+    position: fixed;
+    top: 50%;
+    right: -110px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(-15deg);
+    font-weight: 700;
+    text-transform: uppercase;
+    background-image: url(./media/scratch.png);
+    background-size: 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding-right: 180px;
+    animation: eagleActivation 0.75s linear;
+    p{
+        order: 2;
+        color: white;
+    }
+}
+@keyframes eagleActivation {
+    0%{
+        transform: translateX(100%);
+        transform: rotate(-15deg);
+    }
+    100%{
+        transform: translateX(0);
+        transform: rotate(-15deg);
+    }
+}
 header{
     display: flex;
     align-items: center;
     gap: 60px;
     padding: 20px;
     background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.45);
     h1 {
         color: black;
         z-index: 2000;
